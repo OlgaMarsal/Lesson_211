@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="notes">
+        <item>NoteOne</item>
+        <item>NoteTwo</item>
+        <item>NoteThree</item>
+        <item>NoteFour</item>
+        <item>NoteFive</item>
+    </string-array>
+
+    <integer-array name="notesWrite">
+        <item>editTextOne</item>
+        <item>editTextTwo</item>
+        <item>editTextThree</item>
+        <item>editTextFour</item>
+        <item>editTextFive</item>
+    </integer-array>
+
+</resources>
