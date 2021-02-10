@@ -48,35 +48,5 @@ public class BlankFragmentTwo extends Fragment {
         TypedArray edittext = getResources().obtainTypedArray(R.array.notesWrite);
         editText1.setText(edittext.getResourceId(index, -1));
     }
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        ExtractEditText editText1 = view.findViewById(R.id.editTextTwo);
-        TypedArray edittext = getResources().obtainTypedArray(R.array.notesWrite);
-        editText1.setText(edittext.getResourceId(index, -1));
-    }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        ExtractEditText editText1 = view.findViewById(R.id.editTextThree);
-        TypedArray edittext = getResources().obtainTypedArray(R.array.notesWrite);
-        editText1.setText(edittext.getResourceId(index, -1));
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        ExtractEditText editText1 = view.findViewById(R.id.editTextFour);
-        TypedArray edittext = getResources().obtainTypedArray(R.array.notesWrite);
-        editText1.setText(edittext.getResourceId(index, -1));
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        ExtractEditText editText1 = view.findViewById(R.id.editTextFive);
-        TypedArray edittext = getResources().obtainTypedArray(R.array.notesWrite);
-        editText1.setText(edittext.getResourceId(index, -1));
-    }
 }
