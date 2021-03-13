@@ -2,6 +2,7 @@ package view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.telecom.Call
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,13 +20,52 @@ class MainFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
 
+    private var isDataSetRus: Boolean = true
+
+    private val adapter= MainFragmentAdapter(object : OnItemViewClickListener{
+        override fun onItemViewClick(weather: Weather) {
+            val manager = activity?.supportFragmentManager
+            if (manager != null) {
+                manager.beginTransaction()
+                        .add(R.id.container, DetailsFragment.newInstance(bundle))
+                        .addToBackStack("")
+                        .commit()
+            }
+        }
+    })
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
         _binding = MainFragmentBinding.inflate(inflater, container, attachToParent: false)
-        return binding.root
+        return binding.getRoot()
         }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.mainFragmetRecyclerView.adapter = adapter
+        binding.mainFragmentFAB.setOnClickListener { changeWeatherDataSet() }
+        viewModel = ViewModelProvider(this).get(MianViewModel::class.java)
+        viewModel.getLiveData().observe(viewLifecycleOwner, Observer { renderData(it) })
+        viewModel.getWeatherFromLocalSourceRus()
+    }
+
+    override fun onDestroy() {
+        adapter.removeListener()
+        super.onDestroy()
+    }
+
+    private fun changeWeatherDataSet() {
+        if (isDataSetRus) {
+            viewModel.getWeatherFromLocalSourceWorld()
+            binding.mainFragmentFAB.setImageResource(R.drawable.ic_earth)
+        } else {
+            viewModel.getWeatherFromLocalSourceRus()
+            binding.mainFragmentFAB.setImageResource(R.drawable.ic_russia)
+        }
+        isDataSetRus = !isDataSetRus
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -37,9 +77,8 @@ class MainFragment : Fragment() {
     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
-                val weatherData = appState.weatherData
-                binding.loadingLayout.visibility = View.GONE
-                setData(weatherData)
+                binding.mainFragmentLoadingLayout.visibility = View.GONE
+                adapter.setWeather(appState.weatherData)
             }
             is AppState.Loading -> {
                 binding.loadingLayout.visibility = View.VISIBLE
@@ -47,8 +86,11 @@ class MainFragment : Fragment() {
             is AppState.Error -> {
                 binding.loadingLayout.visibility = View.GONE
                 Snackbar
-                        .make(binding.mainView, "Error", Snackbar.LENGTH_INDEFINITE)
-                        .setAction("Reload") { viewModel.getWeatherFromLocalSource() }
+                        .make(binding.mainView,
+                                "Error",
+                                Snackbar.LENGTH_INDEFINITE
+                        )
+                        .setAction("Reload") { viewModel.getWeatherFromLocalSourceRus() }
                         .show()
             }
         }
@@ -68,6 +110,10 @@ class MainFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    interface onItemViewClickListener {
+        fun onItemViewClick(weather: Weather)
     }
 
     companion object {

@@ -9,24 +9,30 @@ import androidx.lifecycle.ViewModel
 class MainViewModel(
     private val liveDataToObserver: MutableLiveData<AppState> = MutableLiveData(),
     private val repositoryImpl: Repository = RepositoryImpl()
-) : ViewModel() {
+) :
+    ViewModel() {
 
-    fun getLiveData(): LiveData<AppState> = liveDataToObserver
+    fun getLiveData() = liveDataToObserver
 
-    fun getWeatherFromLocalSource() = getDataFromLocalSource()
+    fun getWeatherFromLocalSourceRus() = getDataFromLocalSource(isRussian = true)
 
-    fun getWeatherFromRemoteSource() = getDataFromLocalSource()
+    fun getWeatherFromRemoteSourceWorld() = getDataFromLocalSource(isRussian = false)
 
-    private fun getDataFromLocalSource() {
+    fun getWeatherFromRemoteSource() = getDataFromLocalSource(isRussian = true)
+
+    private fun getDataFromLocalSource(isRussian: Boolean) {
         liveDataToObserver.value = AppState.Loading
         Thread {
             sleep(1000)
-            val data = repositoryImpl.getWeatherFromLocalStorage()
+
+            val data =
+                if (isRussian)
+                    repositoryImpl.getWeatherFromLocalStorageRus()
+                else
+                    repositoryImpl.getWeatherFromLocalStorageWorld()
+
             liveDataToObserver.postValue(
                     AppState.Success(data)
-            )
-            liveDataToObserver.postValue(
-                    AppState.Error(Throwable("No itnternet"))
             )
         }.start()
     }
