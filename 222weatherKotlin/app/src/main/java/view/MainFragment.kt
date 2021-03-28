@@ -21,7 +21,6 @@ class MainFragment : Fragment() {
     private lateinit var viewModel: MainViewModel
 
     private var isDataSetRus: Boolean = true
-
     private val adapter= MainFragmentAdapter(object : OnItemViewClickListener{
         override fun onItemViewClick(weather: Weather) {
             val manager = activity?.supportFragmentManager
@@ -85,16 +84,43 @@ class MainFragment : Fragment() {
             }
             is AppState.Error -> {
                 binding.loadingLayout.visibility = View.GONE
-                Snackbar
-                        .make(binding.mainView,
-                                "Error",
-                                Snackbar.LENGTH_INDEFINITE
-                        )
-                        .setAction("Reload") { viewModel.getWeatherFromLocalSourceRus() }
-                        .show()
+                showSnackBar(
+                        binding.mainFragmentRootView,
+                        getString(R.string.error),
+                        getString(R.string.reload),
+                        { viewModel.getWeatherFromLocalSourceRus() }
+                )
+                binding.mainFragmentRootView.showSnackBarExt(
+                        getString()
+                        getString(R.string.error),
+                        getString(R.string.reload),
+                        { viewModel.getWeatherFromLocalSourceRus() }
+                )
             }
         }
     }
+
+    private fun showSnackBar(
+            view: View,
+            text: String,
+            actionText: String,
+            action: (View) -> Unit,
+            length: Int = Snackbar.LENGTH_INDEFINITE
+    ) {
+        Snackbar.make(view,text, length).setAction(actionText, action). show()
+    }
+
+    private fun View.showSnackBarExt(
+            view: View,
+            text: String,
+            actionText: String,
+            action: (View) -> Unit,
+            length: Int = Snackbar.LENGTH_INDEFINITE
+    ) {
+        Snackbar.make(view,text, length).setAction(actionText, action). show()
+    }
+
+
 
     private fun setData(weatherData: Weather) {
         binding.cityName.text = weatherData.city.city
